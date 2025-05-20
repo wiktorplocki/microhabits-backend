@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { Habit } from './habits.model';
+import { Habit } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class HabitsService {
-  private habits: Array<Habit> = [];
-  private nextId = 1;
+  constructor(private prisma: PrismaService) {}
 
-  getAll(): Array<Habit> {
-    return this.habits;
+  async getAll(): Promise<Array<Habit>> {
+    return this.prisma.habit.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
-  add(name: string): Habit {
-    const habit: Habit = {
-      id: this.nextId++,
-      name,
-      createdAt: new Date(),
-    };
-
-    this.habits.push(habit);
-    return habit;
+  async add(name: string): Promise<Habit> {
+    return this.prisma.habit.create({
+      data: {
+        name,
+      },
+    });
   }
 }

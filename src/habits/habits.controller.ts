@@ -1,23 +1,24 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { HabitsService } from './habits.service';
+import { Habit } from '@prisma/client';
 
 @Controller('habits')
 export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}
 
   @Get()
-  getHabits() {
+  async getHabits(): Promise<Array<Habit>> {
     return this.habitsService.getAll();
   }
 
   @Post()
-  createHabit(@Body('name') name: string) {
+  async createHabit(
+    @Body('name') name: string,
+  ): Promise<Habit | { error: string }> {
     if (!name || name.trim() === '') {
-      return {
-        error: 'Habit name is required',
-      };
+      return { error: 'Name is required' };
     }
 
-    return this.habitsService.add(name.trim());
+    return this.habitsService.add(name);
   }
 }
