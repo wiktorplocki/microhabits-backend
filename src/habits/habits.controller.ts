@@ -19,6 +19,11 @@ export class HabitsController {
     return this.habitsService.getAll();
   }
 
+  @Get(':id')
+  async getHabit(@Param('id', ParseIntPipe) id: number): Promise<Habit> {
+    return this.habitsService.getById(id);
+  }
+
   @Post()
   async createHabit(
     @Body('name') name: string,
