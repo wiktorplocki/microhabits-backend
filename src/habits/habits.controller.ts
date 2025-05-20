@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { HabitsService } from './habits.service';
 import { Habit } from '@prisma/client';
 
@@ -20,5 +28,13 @@ export class HabitsController {
     }
 
     return this.habitsService.add(name);
+  }
+
+  @Delete(':id')
+  async deleteHabit(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    await this.habitsService.delete(id);
+    return { message: 'Habit deleted successfully' };
   }
 }
