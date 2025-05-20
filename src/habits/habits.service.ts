@@ -14,6 +14,18 @@ export class HabitsService {
     });
   }
 
+  async getById(id: number): Promise<Habit> {
+    const habit = await this.prisma.habit.findUnique({
+      where: { id },
+    });
+
+    if (!habit) {
+      throw new NotFoundException(`Habit with ID ${id} not found`);
+    }
+
+    return habit;
+  }
+
   async add(name: string): Promise<Habit> {
     return this.prisma.habit.create({
       data: {
