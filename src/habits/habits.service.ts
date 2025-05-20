@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Habit } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -19,6 +19,20 @@ export class HabitsService {
       data: {
         name,
       },
+    });
+  }
+
+  async delete(id: number): Promise<void> {
+    const habit = await this.prisma.habit.findUnique({
+      where: { id },
+    });
+
+    if (!habit) {
+      throw new NotFoundException(`Habit with ID ${id} not found`);
+    }
+
+    await this.prisma.habit.delete({
+      where: { id },
     });
   }
 }
